@@ -28,7 +28,11 @@ class _HomeState extends State<Home> {
       future: weatherReport,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Text('cannot get weather');
+          return RefreshIndicator(
+              onRefresh: _pullRefresh,
+              child: Scaffold(
+                  body: ListView(
+                      children: [Center(child: Text('cannot get weather'))])));
         } else if (snapshot.hasData) {
           return RefreshIndicator(
               onRefresh: _pullRefresh,
