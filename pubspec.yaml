@@ -38,6 +38,8 @@ dependencies:
   geolocator:
   font_awesome_flutter:
   geocoding:
+  weather_icons:
+  intl: 
 
 dev_dependencies:
   flutter_test:
