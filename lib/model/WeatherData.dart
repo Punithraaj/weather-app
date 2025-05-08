@@ -1,58 +1,55 @@
-import 'dart:convert';
-
 class WeatherData {
-  final DateTime dateTime;
-  final String temp;
-  final String? name;
-  final String description;
+  final String name;
+  final double temp;
   final String currently;
-  final String humidity;
-  final String windSpeed;
-  final String pressure;
-  final String iconData;
+  final String description;
+  final int humidity;
+  final double windSpeed;
+  final int pressure;
+  final DateTime dateTime;
+  final DateTime sunrise;
+  final DateTime sunset;
 
-  WeatherData(
-      this.temp,
-      this.name,
-      this.description,
-      this.currently,
-      this.humidity,
-      this.windSpeed,
-      this.pressure,
-      this.dateTime,
-      this.iconData);
+  WeatherData({
+    required this.name,
+    required this.temp,
+    required this.currently,
+    required this.description,
+    required this.humidity,
+    required this.windSpeed,
+    required this.pressure,
+    required this.dateTime,
+    required this.sunrise,
+    required this.sunset,
+  });
 
-  WeatherData.forcast(Map<String, dynamic> json, String? locality)
-      : dateTime =
-            DateTime.fromMicrosecondsSinceEpoch(json['dt'] * 1000).toLocal(),
-        temp = json['temp']["day"].toString(),
-        name = locality,
-        description = json['weather'][0]['description'] == null
-            ? ""
-            : json['weather'][0]['description'],
-        currently = json['weather'][0]['main'],
-        humidity = json['humidity'] == null ? "0" : json['humidity'].toString(),
-        windSpeed = json['wind_speed'].toString(),
-        pressure = json['pressure'] == null ? "0" : json['pressure'].toString(),
-        iconData = json['weather'][0]['icon'];
+  factory WeatherData.currentWeather(Map<String, dynamic> json, String name) {
+    return WeatherData(
+      name: name,
+      temp: double.parse(json['main']['temp'].toString()),
+      currently: json['weather'][0]['main'],
+      description: json['weather'][0]['description'],
+      humidity: json['main']['humidity'],
+      windSpeed: double.parse(json['wind']['speed'].toString()),
+      pressure: json['main']['pressure'],
+      dateTime: DateTime.fromMillisecondsSinceEpoch((json['dt'] ?? 0) * 1000),
+      sunrise: DateTime.fromMillisecondsSinceEpoch(json['sys']['sunrise'] * 1000),
+      sunset: DateTime.fromMillisecondsSinceEpoch(json['sys']['sunset'] * 1000),
+    );
+  }
 
-  WeatherData.currentWeather(Map<String, dynamic> json, String? locality)
-      : dateTime =
-            DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000).toLocal(),
-        temp = json['temp'].toString(),
-        name = locality,
-        description = json['weather'][0]['description'] == null
-            ? ""
-            : json['weather'][0]['description'],
-        currently = json['weather'][0]['main'],
-        humidity = json['humidity'] == null ? "" : json['humidity'].toString(),
-        windSpeed = json['wind_speed'].toString(),
-        pressure = json['pressure'].toString(),
-        iconData = json['weather'][0]['icon'];
-
-  @override
-  String toString() {
-    print("Now:" + DateTime.now().toUtc().millisecondsSinceEpoch.toString());
-    return 'WeatherData(temp: $temp, name: $name, description: $description, currently: $currently, humidity: $humidity, windSpeed: $windSpeed)';
+  factory WeatherData.fromHourlyJson(Map<String, dynamic> json, String name) {
+    return WeatherData(
+      name: name,
+      temp: double.parse(json['main']['temp'].toString()),
+      currently: json['weather'][0]['main'],
+      description: json['weather'][0]['description'],
+      humidity: json['main']['humidity'],
+      windSpeed: double.parse(json['wind']['speed'].toString()),
+      pressure: json['main']['pressure'],
+      dateTime: DateTime.parse(json['dt_txt']),
+      sunrise: DateTime.parse(json['dt_txt']),
+      sunset: DateTime.parse(json['dt_txt']),
+    );
   }
 }
